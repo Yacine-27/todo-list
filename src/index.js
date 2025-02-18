@@ -133,6 +133,7 @@ const editTodo = function (todoId) {
   setTimeout(expandForm, 0);
 };
 
+console.log(projects);
 addProjectDOM.addEventListener("focus", function () {
   this.value = `New Project ${
     defaultProjectNames === 0 ? "" : defaultProjectNames

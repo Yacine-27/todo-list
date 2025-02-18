@@ -111,6 +111,7 @@ export default class Todo {
       todoObject.priority ? todoObject.priority : "",
       todoObject.dueDate ? new Date(todoObject.dueDate) : ""
     );
+    if (todoObject.isComplete) newTodo.setDone();
     return newTodo;
   }
 }

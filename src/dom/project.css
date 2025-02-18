@@ -1,0 +1,26 @@
+.project {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0.3rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.project p {
+  font-size: 1.5rem;
+}
+
+.remove-project {
+  background-color: inherit;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.project:hover,
+.selected-project {
+  background-color: var(--selected-project);
+  color: var(--main-background);
+}

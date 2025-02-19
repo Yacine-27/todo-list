@@ -62,8 +62,7 @@ export default class Project {
       todos: this.getAllTodos().map((todo) => todo.toJSON()),
     };
   }
-  static parseProjectString(projectString) {
-    const projectObj = JSON.parse(projectString);
+  static parseProjectString(projectObj) {
     const project = new Project(projectObj.name);
     project.setId(projectObj.id);
     projectObj.todos.forEach((todo) => project.add(Todo.parseTodoString(todo)));

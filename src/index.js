@@ -9,7 +9,6 @@ import { addErrorMessage, removeErrorMessage } from "./dom/errorMessage";
 addDateHeader();
 
 let projects = [];
-let defaultProjectNames = 0;
 let selectedProject = null;
 //DOM elements
 const addProjectDOM = document.querySelector(".add-project-input");
@@ -39,16 +38,21 @@ const selectProject = function (id) {
 
 const addProject = function (projectName) {
   const project = new Project(projectName);
+  console.log(project);
+  console.log(projects);
   projects.push(project);
   displayProject(project);
   selectProject(project.getId());
 };
 
 const removeProject = function (id) {
+  console.log(projects);
+  console.log(projects.findIndex((project) => project.getId() === id));
   projects.splice(
-    projects.findIndex((project) => project.id === id),
+    projects.findIndex((project) => project.getId() === id),
     1
   );
+  console.log(projects);
   selectProjectDOM(id).remove();
   todosListDOM.innerHTML = "";
   selectedProject = null;
@@ -57,12 +61,6 @@ const removeProject = function (id) {
 
 const displaySavedProjects = function () {
   projects.forEach((project) => displayProject(project));
-};
-
-const incrementDefaultName = function (projectName) {
-  if (projectName.startsWith("New Project")) {
-    defaultProjectNames++;
-  }
 };
 
 const expandForm = function () {
@@ -133,11 +131,8 @@ const editTodo = function (todoId) {
   setTimeout(expandForm, 0);
 };
 
-console.log(projects);
 addProjectDOM.addEventListener("focus", function () {
-  this.value = `New Project ${
-    defaultProjectNames === 0 ? "" : defaultProjectNames
-  }`;
+  this.value = "";
 });
 
 addProjectDOM.addEventListener("focusout", function () {
@@ -148,7 +143,6 @@ addProjectDOM.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     if (!this.value) return;
     const projectName = this.value;
-    incrementDefaultName(projectName);
     addProject(projectName);
     this.value = "+ Add a list";
     this.blur();
@@ -210,12 +204,31 @@ document.addEventListener("click", function (event) {
   }
 });
 
-const getSavedprojects = function () {
-  Object.keys(localStorage).forEach((key) => {
-    let projectObject = localStorage.getItem(key);
-    projects.push(Project.parseProjectString(projectObject));
-  });
-};
+//Remove default names
+//Fix localStorage
+
+/////////////////
+
+//TODO: work on todo apperance (priority and hiding buttons and style change when the todo is done).
+//TODO: implement sorting projects and todos.
+//TODO: show completion percentage and number of completed todos.
+//TODO: show todo date (Maybe expanding the todo element).
+//TODO: implement expanding and collapsing todo with some cool transitions.
+//TODO: try allowing to edit the project name.
+//TODO: handle setting the todo to done or working on it.
+//TODO: after finsishing advanced css course, try apply transition on the form and adding projects / todos etc..
+
+// const army = new Project("Army");
+// const life = new Project("Life");
+// const js = new Project("JS");
+
+// projects.push(army, life, js);
+// console.log(projects);
+
+// console.log(projects);
+// const wife = new Project("Wife");
+// projects.push(wife);
+// console.log(projects);
 
 const saveAllProjects = function () {
   localStorage.clear();
@@ -224,25 +237,36 @@ const saveAllProjects = function () {
   );
 };
 
+window.addEventListener("unload", saveAllProjects);
+
+const getSavedprojects = function () {
+  let highestId = 0;
+  Object.keys(localStorage).forEach((key) => {
+    const projectString = localStorage.getItem(key);
+    const projectObject = JSON.parse(projectString);
+    highestId = projectObject.id > highestId ? projectObject.id : highestId;
+    projects.push(Project.parseProjectString(projectObject));
+  });
+  Project.id = highestId + 1;
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.length === 0) return;
   getSavedprojects();
-  projects.forEach((project) => incrementDefaultName(project.getName()));
   displaySavedProjects();
   selectProject(projects[0].getId());
 });
 
-window.addEventListener("unload", saveAllProjects);
+// // projects.splice(
+// //   projects.findIndex((project) => project.getId() === 2),
+// //   1
+// // );
 
-/////////////////////////////// test & commit.
+// // console.log(projects);
+// // console.log(projects.length);
 
-//TODO: work on todo apperance (priority and hiding buttons and style change when the todo is done).
-//TODO: implement sorting projects and todos.
-//// DAY //////////
-//TODO: show completion percentage and number of completed todos.
-//TODO: show todo date (Maybe expanding the todo element).
-//TODO: implement expanding and collapsing todo with some cool transitions.
-//TODO: try allowing to edit the project name.
-//TODO: handle setting the todo to done or working on it.
-//TODO: after finsishing advanced css course, try apply transition on the form and adding projects / todos etc..
-//TODO: revisit incrementing the default projects
+// // console.log(Array.isArray(projects)); // Should be true
+// // console.log(Object.keys(projects)); // Should show ["0", "1", "2"]
+// // console.log(Object.getOwnPropertyDescriptors(projects)); // See if `length` is messed up
+// // console.log(projects.map((p, i) => ({ i, p }))); // Check index access
+// console.log(projects);

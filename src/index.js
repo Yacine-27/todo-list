@@ -120,13 +120,13 @@ const toggleDone = function (todoId) {
     buttonText.textContent = "Set Done";
     todoDOM.classList.remove("done-todo");
     todoDOM.querySelector(".set-done").classList.remove("done-button");
-    todoDOM.querySelector(".todo-priority").classList.remove("done-button");
+    todoDOM.querySelector(".todo-priority")?.classList.remove("done-button");
   } else {
     todo.setDone();
     buttonText.textContent = "Set Undone";
     todoDOM.classList.add("done-todo");
     todoDOM.querySelector(".set-done").classList.add("done-button");
-    todoDOM.querySelector(".todo-priority").classList.add("done-button");
+    todoDOM.querySelector(".todo-priority")?.classList.add("done-button");
   }
 };
 

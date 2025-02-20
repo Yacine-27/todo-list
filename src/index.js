@@ -157,6 +157,11 @@ const resetForm = function () {
   todoFormDOM.reset();
 };
 
+const editProjectName = function (newName) {
+  selectedProject.setName(newName);
+  AddProjectInfo(selectedProject);
+};
+
 addProjectDOM.addEventListener("focus", function () {
   this.value = "";
 });
@@ -172,6 +177,14 @@ addProjectDOM.addEventListener("keydown", function (event) {
     addProject(projectName);
     this.value = "+ Add a list";
     this.blur();
+  }
+});
+
+projectsListDOM.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    if (!event.target.classList.contains("project-name")) return;
+    editProjectName(event.target.textContent);
+    event.target.blur();
   }
 });
 

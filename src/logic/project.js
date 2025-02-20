@@ -45,6 +45,10 @@ export default class Project {
     this.#todos.sort((a, b) => a.getDueDate() - b.getDueDate());
   }
 
+  getTodosNumber() {
+    return this.#todos.length;
+  }
+
   getDoneNumber() {
     return this.#todos.reduce((acc, todo) => acc + (todo.isDone() ? 1 : 0), 0);
   }

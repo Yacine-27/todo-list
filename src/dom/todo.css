@@ -1,14 +1,24 @@
 .todo {
   background-color: var(--nav-background);
-  padding: 2rem;
+  padding: 2rem 2rem 4rem 2rem;
   border-radius: 1rem;
   position: relative;
   display: grid;
   grid-template:
-    repeat(3, minmax(5rem, 1fr)) / minmax(30rem, 2fr)
+    repeat(1, minmax(8rem, 1fr)) / minmax(30rem, 2fr)
     repeat(2, minmax(10rem, 1fr));
   gap: 1rem;
-  transition: transform 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+
+.done-todo {
+  background-color: #1b4d3e !important;
+}
+
+.expanded-todo {
+  grid-template:
+    repeat(3, minmax(5rem, 1fr)) / minmax(30rem, 2fr)
+    repeat(2, minmax(10rem, 1fr));
 }
 
 .todo-title {
@@ -33,6 +43,10 @@
   transition: transform 0.3s ease;
 }
 
+.done-button {
+  background-color: #143d60 !important;
+}
+
 .todo-priority {
   grid-area: 3 / 2 / 4 / 3;
   align-self: end;
@@ -49,7 +63,6 @@
 .set-done:hover,
 .todo-priority:hover,
 .remove-todo-button:hover,
-.todo:hover,
 .edit-todo-button:hover {
   transform: scale(1.1);
 }
@@ -82,4 +95,22 @@
   font-size: 2rem;
   width: 100%;
   grid-area: 2 / 3 / 3 / 4;
+}
+
+.expand-todo {
+  position: absolute;
+  margin: 0.5rem;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+}
+
+.medium-priority {
+  background-color: #fba518;
+}
+
+.high-priority {
+  background-color: #e52020;
 }

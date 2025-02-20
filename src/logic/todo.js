@@ -23,17 +23,17 @@ export default class Todo {
     return date >= new Date();
   }
 
-  static setNextPriority(todo) {
+  static getNextPriority(oldPriority) {
     const priorities = [1, 2, 3];
     const currentIndex = priorities.findIndex(
-      (element) => element === todo.getPriority()
+      (element) => element === oldPriority
     );
     const newPriority =
       currentIndex === -1 || currentIndex === priorities.length - 1
         ? priorities[0]
         : priorities[currentIndex + 1];
-    console.log(newPriority);
-    todo.setPriority(newPriority);
+    console.log(oldPriority, newPriority);
+    return newPriority;
   }
   setId(id) {
     this.#id = id;

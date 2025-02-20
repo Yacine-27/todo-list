@@ -187,7 +187,8 @@ input[type="radio"] {
   float: left;
 }
 
-.widget > button[type="submit"] {
+.widget button[type="submit"],
+.widget button[type="button"] {
   margin: auto;
   background-color: var(--main-background);
   border: none;
@@ -198,7 +199,8 @@ input[type="radio"] {
   transition: transform 0.3s ease;
 }
 
-.widget > button[type="submit"]:hover {
+.widget > button[type="submit"]:hover,
+.widget button[type="button"]:hover {
   transform: scale(1.1);
   background-color: #f99417;
 }
@@ -219,9 +221,31 @@ input[type="radio"] {
   gap: 2rem;
   min-width: 50%;
   margin-top: 2rem;
+  position: relative;
 }
 
 .error-message h3 {
   color: #e52020;
   font-size: 2rem;
+}
+
+.project-info h3 {
+  font-size: 3rem;
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.sort-by-date {
+  background-color: #4635b1;
+  border: none;
+  margin-top: 2rem;
+  font-size: 2.5rem;
+  padding: 1.5rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.sort-by-date:hover {
+  background-color: #7e1891;
 }

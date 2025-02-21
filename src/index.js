@@ -71,7 +71,6 @@ const displaySavedProjects = function () {
 
 const expandForm = function () {
   document.querySelector(".name-widget-label").classList.remove("hidden");
-  document.querySelector(".name-widget-label").classList.add("hidden");
   Array.from(todoFormDOM.children).forEach((widget) =>
     widget.classList.remove("hidden")
   );
@@ -314,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
   selectProject(projects[0].getId());
 });
 
-// TODO: try allowing to edit the project name.
-
 // TODO: show todo date (Maybe expanding the todo element).
 // TODO: after finishing advanced css course, try apply transition on the form and adding projects / todos etc..
+// TODO: making the app responsive.

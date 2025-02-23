@@ -5,14 +5,14 @@ export const todosListDOM = document.querySelector(".todos");
 export const addTodoDOM = function (todo) {
   const html = `<div class="todo  ${
     todo.isDone() ? "done-todo" : ""
-  }" data-todo-id='${todo.getId()}'>
+  } }" data-todo-id='${todo.getId()}'>
                   <button class="set-done ${
                     todo.isDone() ? "done-button" : ""
                   } "> ${todo.isDone() ? "Set Undone" : "Set Done"} </button>
-                  <p class="todo-title">${todo.getTitle()}</p>
+                  <p class="todo-title">${todo.getTitle()} </p>
                   ${
                     todo.getDueDate()
-                      ? `<p class="todo-date hidden">${todo.getDueDateDifference()}</p>`
+                      ? `<p class="todo-date hidden">${todo.getDueDateDifference()} ${todo.isOverDue() ? "(Overdue 🕔)".toUpperCase() : ""}</p>`
                       : ""
                   } 
                   ${
@@ -20,9 +20,9 @@ export const addTodoDOM = function (todo) {
                       ? `<button class="todo-priority ${
                           todo.isDone() ? "done-button" : ""
                         } ${getPriorityClass(
-                          todo.getPriority()
+                          todo.getPriority(),
                         )} hidden">${displayPriority(
-                          todo.getPriority()
+                          todo.getPriority(),
                         )}</button>`
                       : ""
                   }
@@ -50,6 +50,6 @@ export const getPriorityClass = function (priority) {
   return priority === 2
     ? "medium-priority"
     : priority === 3
-    ? "high-priority"
-    : "low-priority";
+      ? "high-priority"
+      : "low-priority";
 };

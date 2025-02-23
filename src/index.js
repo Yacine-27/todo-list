@@ -37,7 +37,7 @@ const selectProject = function (id) {
   Array.from(projectsDOM).forEach((project) => {
     project.classList.remove("selected-project");
   });
-  selectedProject = projects.find((project) => project.getId() === id);
+  selectedProject = findProject(id);
   displayProjectTodos(selectedProject);
   selectProjectDOM(id).classList.add("selected-project");
   AddProjectInfo(selectedProject);
@@ -55,7 +55,7 @@ const addProject = function (projectName) {
 const removeProject = function (id) {
   projects.splice(
     projects.findIndex((project) => project.getId() === id),
-    1
+    1,
   );
   selectProjectDOM(id).remove();
   todosListDOM.innerHTML = "";
@@ -72,7 +72,7 @@ const displaySavedProjects = function () {
 const expandForm = function () {
   document.querySelector(".name-widget-label").classList.remove("hidden");
   Array.from(todoFormDOM.children).forEach((widget) =>
-    widget.classList.remove("hidden")
+    widget.classList.remove("hidden"),
   );
 };
 
@@ -120,12 +120,14 @@ const toggleDone = function (todoId) {
     todoDOM.classList.remove("done-todo");
     todoDOM.querySelector(".set-done").classList.remove("done-button");
     todoDOM.querySelector(".todo-priority")?.classList.remove("done-button");
+    todoDOM.querySelector(".todo-date").classList.remove("hidden");
   } else {
     todo.setDone();
     buttonText.textContent = "Set Undone";
     todoDOM.classList.add("done-todo");
     todoDOM.querySelector(".set-done").classList.add("done-button");
     todoDOM.querySelector(".todo-priority")?.classList.add("done-button");
+    todoDOM.querySelector(".todo-date").classList.add("hidden");
   }
 };
 
@@ -140,7 +142,7 @@ const editTodo = function (todoId) {
     : "";
   if (todo.getPriority())
     todoFormDOM.querySelector(
-      `input[name="priority"][value="${todo.getPriority()}"]`
+      `input[name="priority"][value="${todo.getPriority()}"]`,
     ).checked = true;
 
   removeTodo(todoId);
@@ -159,6 +161,58 @@ const resetForm = function () {
 const editProjectName = function (newName) {
   selectedProject.setName(newName);
   AddProjectInfo(selectedProject);
+};
+
+const collapseTodo = function (todoId) {
+  const todoDOM = findTodoDom(todoId);
+  todoDOM.classList.remove("expanded-todo");
+  Array.from(todoDOM.children).forEach((widget) => {
+    if (
+      widget.classList.contains("set-done") ||
+      widget.classList.contains("todo-title") ||
+      widget.classList.contains("expand-todo")
+    )
+      return;
+    widget.classList.add("hidden");
+  });
+};
+
+const toggleExpanded = function (todoId, collapseButton) {
+  const todoDom = findTodoDom(todoId);
+
+  if (todoDom.classList.contains("expanded-todo")) {
+    collapseButton.textContent = "🔽";
+    collapseTodo(todoId);
+  } else {
+    collapseButton.textContent = "🔼";
+    expandTodo(todoId);
+  }
+};
+
+const expandTodo = function (todoId) {
+  const todoDOM = findTodoDom(todoId);
+  todoDOM.classList.add("expanded-todo");
+  Array.from(todoDOM.children).forEach((widget) =>
+    widget.classList.remove("hidden"),
+  );
+};
+
+const getSavedprojects = function () {
+  let highestId = 0;
+  Object.keys(localStorage).forEach((key) => {
+    const projectString = localStorage.getItem(key);
+    const projectObject = JSON.parse(projectString);
+    highestId = projectObject.id > highestId ? projectObject.id : highestId;
+    projects.push(Project.parseProjectString(projectObject));
+  });
+  Project.id = highestId + 1;
+};
+
+const saveAllProjects = function () {
+  localStorage.clear();
+  projects.forEach((project) =>
+    localStorage.setItem(project.getName(), JSON.stringify(project)),
+  );
 };
 
 addProjectDOM.addEventListener("focus", function () {
@@ -201,16 +255,23 @@ nameWidgetDOM.addEventListener("focus", expandForm);
 
 collapseFormButton.addEventListener("click", collapseForm);
 
+const handleTodoForm = function (todoData) {
+  if (!Todo.isFutureDate(todoData.date))
+    throw new Error("Please enter a future date.");
+  Todo.isFutureDate(todoData.date);
+  return new Todo(
+    todoData.name,
+    todoData.description ? todoData.description : "",
+    todoData.priority ? Number(todoData.priority) : 0,
+    todoData.date ? new Date(todoData.date) : "",
+  );
+};
+
 todoFormDOM.addEventListener("submit", function (event) {
   event.preventDefault();
   let formData = Object.fromEntries(new FormData(this).entries());
   try {
-    const todo = new Todo(
-      formData.name,
-      formData.description ? formData.description : "",
-      formData.priority ? Number(formData.priority) : 0,
-      formData.date ? new Date(formData.date) : ""
-    );
+    const todo = handleTodoForm(formData);
     addTodo(todo);
     this.reset();
     collapseForm();
@@ -246,65 +307,13 @@ todosListDOM.addEventListener("click", function (event) {
   }
 });
 
-const toggleExpanded = function (todoId, collapseButton) {
-  const todoDom = findTodoDom(todoId);
-
-  if (todoDom.classList.contains("expanded-todo")) {
-    collapseButton.textContent = "🔽";
-    collapseTodo(todoId);
-  } else {
-    collapseButton.textContent = "🔼";
-    expandTodo(todoId);
-  }
-};
-
-const expandTodo = function (todoId) {
-  const todoDOM = findTodoDom(todoId);
-  todoDOM.classList.add("expanded-todo");
-  Array.from(todoDOM.children).forEach((widget) =>
-    widget.classList.remove("hidden")
-  );
-};
-
-const collapseTodo = function (todoId) {
-  const todoDOM = findTodoDom(todoId);
-  todoDOM.classList.remove("expanded-todo");
-  Array.from(todoDOM.children).forEach((widget) => {
-    if (
-      widget.classList.contains("set-done") ||
-      widget.classList.contains("todo-title") ||
-      widget.classList.contains("expand-todo")
-    )
-      return;
-    widget.classList.add("hidden");
-  });
-};
-
 document.addEventListener("click", function (event) {
   if (!todoFormDOM.contains(event.target)) {
     collapseForm();
   }
 });
 
-const saveAllProjects = function () {
-  localStorage.clear();
-  projects.forEach((project) =>
-    localStorage.setItem(project.getName(), JSON.stringify(project))
-  );
-};
-
 window.addEventListener("unload", saveAllProjects);
-
-const getSavedprojects = function () {
-  let highestId = 0;
-  Object.keys(localStorage).forEach((key) => {
-    const projectString = localStorage.getItem(key);
-    const projectObject = JSON.parse(projectString);
-    highestId = projectObject.id > highestId ? projectObject.id : highestId;
-    projects.push(Project.parseProjectString(projectObject));
-  });
-  Project.id = highestId + 1;
-};
 
 document.addEventListener("DOMContentLoaded", () => {
   if (localStorage.length === 0) return;
@@ -316,3 +325,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // TODO: show todo date (Maybe expanding the todo element).
 // TODO: after finishing advanced css course, try apply transition on the form and adding projects / todos etc..
 // TODO: making the app responsive.
+// TODO: allowing for not setting up exact time for todos.

@@ -9,24 +9,21 @@ export default class Todo {
   static id = 0;
 
   constructor(title, description, priority, dueDate) {
-    if (!Todo.checkValidDate(dueDate)) {
-      throw new Error("PLease Select A Future Date");
-    }
     this.#title = title;
     this.#description = description;
     this.#priority = priority;
     this.#dueDate = dueDate;
     this.#id = Todo.id++;
   }
-  static checkValidDate(date) {
+  static isFutureDate(date) {
     if (!date) return true;
-    return date >= new Date();
+    return new Date(date) >= new Date();
   }
 
   static getNextPriority(oldPriority) {
     const priorities = [1, 2, 3];
     const currentIndex = priorities.findIndex(
-      (element) => element === oldPriority
+      (element) => element === oldPriority,
     );
     const newPriority =
       currentIndex === -1 || currentIndex === priorities.length - 1
@@ -76,7 +73,7 @@ export default class Todo {
   }
 
   setDueDate(newDate) {
-    if (!Todo.checkValidDate(newDate)) {
+    if (!Todo.isFutureDate(newDate)) {
       console.log("not a valid date");
       return;
     }
@@ -95,6 +92,10 @@ export default class Todo {
     return format(this.#dueDate, "dd/MM/yyyy");
   }
 
+  isOverDue() {
+    return !this.isDone() && !Todo.isFutureDate(this.getDueDate());
+  }
+
   toJSON() {
     return {
       title: this.getTitle(),
@@ -109,7 +110,7 @@ export default class Todo {
       todoObject.title,
       todoObject.description ? todoObject.description : "",
       todoObject.priority ? todoObject.priority : "",
-      todoObject.dueDate ? new Date(todoObject.dueDate) : ""
+      todoObject.dueDate ? new Date(todoObject.dueDate) : "",
     );
     if (todoObject.isComplete) newTodo.setDone();
     return newTodo;

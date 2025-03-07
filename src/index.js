@@ -11,8 +11,7 @@ import {
 } from "./dom/todo";
 import { addErrorMessage, removeErrorMessage } from "./dom/errorMessage";
 import AddProjectInfo from "./dom/projectInfo";
-
-addDateHeader();
+import { da } from "date-fns/locale";
 
 let projects = [];
 let selectedProject = null;
@@ -25,6 +24,8 @@ const nameWidgetDOM = document.querySelector(".widget-name-input");
 const collapseFormButton = document.querySelector(".collapse-form");
 const resetFormButton = document.querySelector(".reset-form");
 const sortButton = document.querySelector(".sort-by-date");
+
+addDateHeader();
 
 const findProject = function (id) {
   return projects.find((project) => project.getId() === id);
@@ -255,15 +256,43 @@ nameWidgetDOM.addEventListener("focus", expandForm);
 
 collapseFormButton.addEventListener("click", collapseForm);
 
+const createDateTime = function (time, date = new Date()) {
+  const [hours, minutes] = time.split(":").map(Number);
+  const newDate = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+    hours,
+    minutes,
+  );
+  return newDate;
+};
+
+const createDate = function (date, time) {
+  if (!date && !time) return "";
+  if (!date) {
+    const today = new Date();
+    if (createDateTime(time) < today) {
+      today.setDate(today.getDate() + 1);
+    }
+    date = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, 0)}-${today.getDate().toString().padStart(2, 0)}`;
+  }
+  if (!time) {
+    time = "24:00";
+  }
+  const dateTimeString = `${date}T${time}:00`;
+  return new Date(dateTimeString);
+};
+
 const handleTodoForm = function (todoData) {
-  if (!Todo.isFutureDate(todoData.date))
-    throw new Error("Please enter a future date.");
+  const date = createDate(todoData.date, todoData.time);
+  if (!Todo.isFutureDate(date)) throw new Error("Please enter a future date.");
   Todo.isFutureDate(todoData.date);
   return new Todo(
     todoData.name,
     todoData.description ? todoData.description : "",
     todoData.priority ? Number(todoData.priority) : 0,
-    todoData.date ? new Date(todoData.date) : "",
+    date,
   );
 };
 
@@ -322,7 +351,6 @@ document.addEventListener("DOMContentLoaded", () => {
   selectProject(projects[0].getId());
 });
 
-// TODO: show todo date (Maybe expanding the todo element).
 // TODO: after finishing advanced css course, try apply transition on the form and adding projects / todos etc..
 // TODO: making the app responsive.
 // TODO: allowing for not setting up exact time for todos.

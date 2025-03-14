@@ -48,7 +48,7 @@ nav h3 {
 .add-project-input {
   background-color: inherit;
   border: none;
-  font-size: 1.7em;
+  font-size: 1.7rem;
   border: none;
   text-align: center;
   width: 100%;
@@ -248,4 +248,13 @@ input[type="radio"] {
 
 .sort-by-date:hover {
   background-color: #7e1891;
+}
+
+@media (max-width: 500px) {
+  html {
+    font-size: 8px;
+  }
+  .list-header {
+    display: none;
+  }
 }
